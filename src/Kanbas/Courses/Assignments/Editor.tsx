@@ -99,7 +99,7 @@ export default function AssignmentEditor() {
 
             <tr>
                 <td></td>
-                <td><button>Cancel</button><button>Safe</button></td>
+                <td><button>Cancel</button><button>Save</button></td>
             </tr>       
         </table> 
 
