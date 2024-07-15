@@ -8,7 +8,6 @@ export default function Labs() {
     <div>
       <h1>Mon-Shan Lin</h1>
       <h1>CS5610 Summer 2 Section: 61065</h1>
-      <h1>https://github.com/MonShanLin/kanbas-react-web-app </h1>
       <h1>Labs</h1>
       <TOC />
       <Routes>
