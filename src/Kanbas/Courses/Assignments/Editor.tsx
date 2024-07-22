@@ -4,16 +4,14 @@ import * as db from "../../Database";
 import { useParams } from "react-router";
 
 export default function AssignmentEditor() {
-  const { cid } = useParams();
-  const assignments = db.assignments.filter(assignment => assignment.course === cid);
+  const { cid, id } = useParams(); 
+  const assignments = db.assignments.find((assignment) => assignment.course === cid && assignment._id === id );
 
     return (
       <div id="wd-assignments-editor" className="container mt-4">
       <div className="mb-3">
           <label htmlFor="wd-name" className="form-label">Assignment Name</label>
-          {assignments.map(assignment => (
-          <input id="wd-name" value={assignment.title} className="form-control" />
-          ))}
+          <input id="wd-name" value={assignments.title} className="form-control" />
           </div>
       
       <div className="mb-3">
