@@ -1,4 +1,3 @@
-import EditorButtons from "./EditorButtons";
 import './Assignments.css';
 import * as db from "../../Database";
 import { Link, useParams } from "react-router-dom";
