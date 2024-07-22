@@ -11,5 +11,4 @@ export {
     users,
     enrollments,
     grades,
-
 };

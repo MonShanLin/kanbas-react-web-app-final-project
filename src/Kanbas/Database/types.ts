@@ -8,7 +8,6 @@ export interface User {
     dob: string;
     role: string;
 }
-
 export interface Assignment {
     _id: string;
     title: string;
