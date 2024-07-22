@@ -683,12 +683,12 @@ This heading has same style as paragraph above
             <a href="#" className="btn btn-primary">
               Boldly Go
             </a>
+
+
           </div>
         </div>
       </div>
 
-
-
-    </div>
+</div>
   );
 }

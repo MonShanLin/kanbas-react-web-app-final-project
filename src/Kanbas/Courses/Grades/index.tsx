@@ -3,20 +3,38 @@ import { FaFileImport } from "react-icons/fa6";
 import { IoIosSettings } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 import { CiFilter } from "react-icons/ci";
+import { useParams } from "react-router";
+import * as db from "../../Database";
+import { User, Assignment, Grade, Enrollment } from "../../Database/types";
 
 export default function Grades() {
+  const { cid } = useParams<string>();
+
+  if (!cid) return <div>Course not found</div>;
+
+  const studentsInCourse: User[] = db.enrollments
+    .filter((enrollment: Enrollment) => enrollment.course === cid)
+    .map((enrollment: Enrollment) => db.users.find((user: User) => user._id === enrollment.user))
+    .filter((user: User | undefined): user is User => user !== undefined);
+
+  const assignmentsInCourse: Assignment[] = db.assignments
+    .filter((assignment: Assignment) => assignment.course === cid);
+
+  const gradesInCourse: Grade[] = db.grades
+    .filter((grade: Grade) => studentsInCourse.some((student: User) => student._id === grade.student));
+
   return (
     <div id="wd-grades-controls-container" className="container mt-4">
       <div className="row mb-3">
         <div className="col text-end">
-          <button id="wd-add-grades-btn" className="btn btn-lg btn-secondary me-1 float-end ">
+          <button id="wd-add-grades-btn" className="btn btn-lg btn-secondary me-1 float-end">
             <IoIosSettings className="position-relative me-2" style={{ bottom: "1px", fontSize: "1.5em" }} />
           </button>
-          <button id="wd-add-module-btn" className="btn btn-lg btn-secondary me-1 dropdown-toggle float-end ">
+          <button id="wd-add-module-btn" className="btn btn-lg btn-secondary me-1 dropdown-toggle float-end">
             <LiaFileImportSolid className="position-relative me-2" style={{ bottom: "1px" }} />
             Export
           </button>
-          <button id="wd-add-module-btn" className="btn btn-lg btn-secondary me-1 float-end ">
+          <button id="wd-add-module-btn" className="btn btn-lg btn-secondary me-1 float-end">
             <FaFileImport className="position-relative me-2" style={{ bottom: "1px" }} />
             Import
           </button>
@@ -32,33 +50,31 @@ export default function Grades() {
         </div>
       </div>
 
-
       <div className="row mb-3">
         <div className="col">
           <div className="input-group">
-          <div className="search-container">
-            <FaSearch className="search-icon" />
-            <input
-              id="wd-search-student"
-              className="form-control search-input"
-              placeholder="Search Students..."
+            <div className="search-container">
+              <FaSearch className="search-icon" />
+              <input
+                id="wd-search-student"
+                className="form-control search-input"
+                placeholder="Search Students..."
               />
-
+            </div>
           </div>
-        </div>
         </div>
         <div className="col">
           <div className="input-group">
-          <div className="search-container">
-          <FaSearch className="search-icon" />
-            <input
-              id="wd-search-assignments"
-              className="form-control search-input"
-              placeholder="Search Assignments..."
-            />
+            <div className="search-container">
+              <FaSearch className="search-icon" />
+              <input
+                id="wd-search-assignments"
+                className="form-control search-input"
+                placeholder="Search Assignments..."
+              />
+            </div>
           </div>
         </div>
-      </div>
       </div>
 
       <div className="row mb-3">
@@ -72,42 +88,35 @@ export default function Grades() {
 
       <div id="wd-css-responsive-tables" className="table-responsive">
         <table className="table table-striped border-grey table-bordered">
-      <thead>
-        <tr><th>Student Name</th><th>A1 SETUP <br /> Out of 100</th><th>A2 HTML <br /> Out of 100</th><th>A3 CSS <br /> Out of 100</th><th>A4 BOOTSTRAP <br /> Out of 100</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-           <td>Jane Adams</td><td>100%</td><td>92.67%</td><td>92.18%</td><td>66.22</td>
-        </tr>
-
-        <tr>
-        <td>Christina Allen</td><td>100%</td><td>100%</td><td>100%</td><td>100%</td>
-        </tr>
-
-        <tr>
-        <td>Samreen Ansari</td><td>100%</td><td>92.67%</td><td>92.18%</td><td>66.22</td>
-        </tr>
- 
-        <tr>
-        <td>Han Bao</td><td>100%</td><td>100%</td><td><div className="d-flex align-items-center">
-                    <input type="text" className="form-control me-2" defaultValue="88.03%" />
-                    <FaFileImport style={{ fontSize: "1.2em" }} />
-                  </div></td><td>98.99%</td>
-        </tr>
- 
-        <tr>
-        <td>Mahi Sai Srinivas Bobbili</td><td>100%</td><td>96.67%</td><td>98.37%</td><td>100%</td>
-        </tr>
-
-        <tr>
-        <td>Siran Cao</td><td>100%</td><td>100%</td><td>100%</td><td>100%</td>
-        </tr>
-      </tbody>
-
-    </table>
-  </div>
-</div>
-
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              {assignmentsInCourse.map((assignment) => (
+                <th key={assignment._id}>
+                  {assignment.title} <br /> Out of 100
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {studentsInCourse.map((student) => (
+              <tr key={student._id}>
+                <td>{student.firstName} {student.lastName}</td>
+                {assignmentsInCourse.map((assignment) => {
+                  const grade = gradesInCourse.find(
+                    (grade) => grade.student === student._id && grade.assignment === assignment._id
+                  );
+                  return (
+                    <td key={assignment._id}>
+                      {grade ? `${grade.grade}%` : "N/A"}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

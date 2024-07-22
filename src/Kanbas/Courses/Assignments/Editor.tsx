@@ -1,12 +1,20 @@
 import EditorButtons from "./EditorButtons";
 import './Assignments.css';
+import * as db from "../../Database";
+import { useParams } from "react-router";
+
 export default function AssignmentEditor() {
+  const { cid } = useParams();
+  const assignments = db.assignments.filter(assignment => assignment.course === cid);
+
     return (
       <div id="wd-assignments-editor" className="container mt-4">
       <div className="mb-3">
           <label htmlFor="wd-name" className="form-label">Assignment Name</label>
-          <input id="wd-name" value="A1" className="form-control" />
-      </div>
+          {assignments.map(assignment => (
+          <input id="wd-name" value={assignment.title} className="form-control" />
+          ))}
+          </div>
       
       <div className="mb-3">
                 <label htmlFor="wd-description" className="form-label">Description</label>
@@ -172,4 +180,5 @@ export default function AssignmentEditor() {
 
   );
 }
+
 
