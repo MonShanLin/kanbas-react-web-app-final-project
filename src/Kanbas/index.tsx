@@ -3,19 +3,10 @@ import KanbasNavigation from "./Navigation";
 import { Routes, Route, Navigate } from "react-router";
 import Courses from "./Courses";
 import "./styles.css";
-import * as db from "./Database";
-import { useState } from "react";
 import store from "./store";
 import { Provider } from "react-redux";
-
-interface Course {
-  _id: string;
-  name: string;
-  number: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-}
+import * as db from "./Database";
+import { useState } from "react";
 
 export default function Kanbas() {
   const [courses, setCourses] = useState<any[]>(db.courses);
@@ -49,14 +40,14 @@ export default function Kanbas() {
             <Routes>
               <Route path="/" element={<Navigate to="Dashboard" />} />
               <Route path="Account" element={<h1>Account</h1>} />
-              <Route path="Dashboard" element={            
+              <Route path="Dashboard" element={
               <Dashboard
-              courses={courses}
-              course={course}
-              setCourse={setCourse}
-              addNewCourse={addNewCourse}
-              deleteCourse={deleteCourse}
-              updateCourse={updateCourse}/>
+                courses={courses}
+                course={course}
+                setCourse={setCourse}
+                addNewCourse={addNewCourse}
+                deleteCourse={deleteCourse}
+                updateCourse={updateCourse}/>
             } />
               <Route path="Courses/:cid/*" element={<Courses courses={courses} />} />
               <Route path="Calendar" element={<h1>Calendar</h1>} />
