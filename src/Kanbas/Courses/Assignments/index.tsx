@@ -14,6 +14,8 @@ export default function Assignments() {
   const assignments = useSelector((state: RootState) => state.assignments.assignments.filter(assignment => assignment.course === cid));
   const dispatch = useDispatch();
   const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
 
   const handleAddAssignment = () => {
     dispatch(addAssignment({ title: assignmentTitle, course: cid }));
@@ -22,6 +24,24 @@ export default function Assignments() {
 
   const updateAssignmentHandler = (assignment: any) => {
     dispatch(updateAssignment(assignment));
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setAssignmentToDelete(id);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (assignmentToDelete) {
+      dispatch(deleteAssignment(assignmentToDelete));
+    }
+    setShowConfirmDialog(false);
+    setAssignmentToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDialog(false);
+    setAssignmentToDelete(null);
   };
 
   return (
@@ -79,12 +99,21 @@ export default function Assignments() {
                     <b> | Due</b> May 13 at 11:59pm | 100 pts
                   </span>
                 </div>
-                <AssignmentControlButtons assignmentId={assignment._id} />
+                <AssignmentControlButtons assignmentId={assignment._id} onDelete={handleDeleteClick} />
               </li>
             ))}
           </ul>
         </li>
       </ul>
+
+      {showConfirmDialog && (
+        <div className="confirm-dialog">
+          <p>Are you sure you want to remove the assignment?</p>
+          <button className="btn btn-danger" onClick={handleConfirmDelete}>Yes</button>
+          <button className="btn btn-secondary" onClick={handleCancelDelete}>No</button>
+        </div>
+      )}
     </div>
   );
 }
+
