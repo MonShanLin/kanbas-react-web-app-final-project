@@ -12,10 +12,12 @@ export interface Assignment {
     _id: string;
     title: string;
     description: string;
-    points: number;
+    course: string;
     due: string;
     available: string;
-    course: string;
+    until: string;
+    points: number;
+    editing?: boolean;
   }
 
 export interface Grade {

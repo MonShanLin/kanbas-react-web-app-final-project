@@ -7,7 +7,6 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentControls from "./AssignmentControls";
 import BannerControlButtons from "./BannerControlButtons";
-import { LuFileSignature } from "react-icons/lu";
 import { FaSearch } from "react-icons/fa";
 
 export default function Assignments() {
@@ -77,9 +76,7 @@ export default function Assignments() {
                   <br />
                   <span className="smaller-text">
                     <span className="text-red">Multiple Modules </span>
-                    | <b> Not available until</b> May 6 at 12:00am |
-                    <br />
-                    <b>Due</b> May 13 at 11:59pm | 100 pts
+                    <b> | Due</b> May 13 at 11:59pm | 100 pts
                   </span>
                 </div>
                 <AssignmentControlButtons assignmentId={assignment._id} />
@@ -99,6 +96,7 @@ interface Assignment {
   course: string;
   due: string;
   available: string;
+  until: string; 
   points: number;
   editing?: boolean;
 }
