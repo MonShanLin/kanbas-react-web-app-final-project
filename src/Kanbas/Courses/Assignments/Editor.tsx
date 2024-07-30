@@ -14,13 +14,17 @@ export default function AssignmentEditor() {
     state.assignments.assignments.find((assignment) => assignment.course === cid && assignment._id === id)
   );
 
+  const dateObjectToHtmlDateString = (date: Date) => {
+    return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? '0' : ''}${date.getMonth() + 1}-${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
+  };
+
   const [assignmentDetails, setAssignmentDetails] = useState({
     title: assignment ? assignment.title : "",
     description: assignment ? assignment.description : "",
     points: assignment ? assignment.points : 100,
-    due: assignment ? assignment.due : "",
-    available: assignment ? assignment.available : "",
-    until: assignment ? assignment.until : ""
+    due: assignment ? dateObjectToHtmlDateString(new Date(assignment.due)) : "",
+    available: assignment ? dateObjectToHtmlDateString(new Date(assignment.available)) : "",
+    until: assignment ? dateObjectToHtmlDateString(new Date(assignment.until)) : ""
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -30,9 +34,9 @@ export default function AssignmentEditor() {
 
   const handleSave = () => {
     if (assignment) {
-      dispatch(updateAssignment({ ...assignment, ...assignmentDetails }));
+      dispatch(updateAssignment({ ...assignment, ...assignmentDetails, due: new Date(assignmentDetails.due).toISOString(), available: new Date(assignmentDetails.available).toISOString(), until: new Date(assignmentDetails.until).toISOString() }));
     } else {
-      dispatch(addAssignment({ ...assignmentDetails, course: cid }));
+      dispatch(addAssignment({ ...assignmentDetails, course: cid, due: new Date(assignmentDetails.due).toISOString(), available: new Date(assignmentDetails.available).toISOString(), until: new Date(assignmentDetails.until).toISOString() }));
     }
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
@@ -54,7 +58,7 @@ export default function AssignmentEditor() {
           <label htmlFor="points" className="form-label">Points</label>
         </div>
         <div className="col-md-4 flex-grow-1">
-          <input id="points" value={assignmentDetails.points} onChange={handleInputChange} className="form-control" />
+          <input id="points" type="number" value={assignmentDetails.points} onChange={handleInputChange} className="form-control" />
         </div>
       </div>
 

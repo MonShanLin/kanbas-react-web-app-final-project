@@ -96,7 +96,7 @@ export default function Assignments() {
                   <br />
                   <span className="smaller-text">
                     <span className="text-red">Multiple Modules </span>
-                    <b> | Due</b> May 13 at 11:59pm | 100 pts
+                    <b> | Due</b> {new Date(assignment.due).toLocaleDateString()} at {new Date(assignment.due).toLocaleTimeString()} | {assignment.points} pts
                   </span>
                 </div>
                 <AssignmentControlButtons assignmentId={assignment._id} onDelete={handleDeleteClick} />
@@ -116,4 +116,3 @@ export default function Assignments() {
     </div>
   );
 }
-
