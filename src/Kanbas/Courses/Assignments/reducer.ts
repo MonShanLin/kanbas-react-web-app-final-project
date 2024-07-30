@@ -2,18 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import { assignments } from "../../Database";
 
 interface Assignment {
-    _id: string;
-    title: string;
-    description: string;
-    course: string;
-    due: string;
-    available: string;
-    points: number;
-    editing?: boolean;
-  }
+  _id: string;
+  title: string;
+  description: string;
+  course: string;
+  due: string;
+  available: string;
+  points: number;
+  editing?: boolean;
+}
 
 const initialState = {
-  assignments: assignments,
+  assignments: assignments.map(assignment => ({ ...assignment, editing: false })),
 };
 
 const assignmentsSlice = createSlice({
@@ -24,6 +24,7 @@ const assignmentsSlice = createSlice({
       const newAssignment = {
         ...assignment,
         _id: new Date().getTime().toString(),
+        editing: false,
       };
       state.assignments = [...state.assignments, newAssignment];
     },

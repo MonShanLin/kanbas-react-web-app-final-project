@@ -8,11 +8,13 @@ import { BsGripVertical } from "react-icons/bs";
 import React, { useState } from "react";
 import { useParams } from "react-router";
 import * as db from "../../Database";
+import { RootState } from "../../store";
+
 export default function Modules() {
   const { cid } = useParams();
   const [moduleName, setModuleName] = useState("");
   
-  const { modules } = useSelector((state: any) => state.modulesReducer);
+  const { modules } = useSelector((state: RootState) => state.modules);
   const dispatch = useDispatch();
 
     
