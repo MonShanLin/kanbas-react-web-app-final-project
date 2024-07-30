@@ -57,7 +57,7 @@ export default function Assignments() {
             {assignments.map(assignment => (
               <li key={assignment._id} className="wd-assignment list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
                 <BsGripVertical className="me-2 fs-3" />
-                <LuFileSignature className="me-4 text-green" />
+                
                 <div className="flex-grow-1">
                   { !assignment.editing && <a className="wd-assignment-link text-black no-underline" href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}><b>{assignment.title}</b></a>}
                   { assignment.editing && (
