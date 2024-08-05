@@ -21,12 +21,12 @@ export default function Lab4() {
       <div id="wd-lab4">
         <h2>Lab 4</h2>
 
-        <ClickEvent />
-        <PassingDataOnEvent />
+
 
         <div id="wd-passing-functions">
-            <h2>Lab 4</h2>
-            ...
+            
+            <ClickEvent />
+            <PassingDataOnEvent />
             <PassingFunctions theFunction={sayHello} />
             </div>
         

@@ -33,6 +33,8 @@ import Highlight from "./Highlight";
 import AddPathParameters from "./AddPathParameters"
 import PathParameters from "./PathParameters" 
 import { useSelector } from "react-redux";
+import Abc from "./LegacyFunctions";
+
 
 export default function Lab3() {
   console.log('Hello World!');
@@ -107,7 +109,7 @@ export default function Lab3() {
 
       <PathParameters />
       <AddPathParameters />
-
+    
     </div>
   );
 }

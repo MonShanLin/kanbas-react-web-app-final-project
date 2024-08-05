@@ -14,6 +14,7 @@ export default function Lab2() {
         it is considered bad practice and you should avoid
         using the style attribute
       </p>
+      
 
     <div id="wd-css-id-selectors">
       <h3>ID selectors</h3>
