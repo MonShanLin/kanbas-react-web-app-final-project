@@ -15,19 +15,19 @@ export default function QueryParameters() {
          className="form-control mb-2"
          value={b} type="number"
          onChange={(e) => setB(e.target.value)} />
-  <a id="wd-query-parameter-add"
+  <a className="btn btn-primary" id="wd-query-parameter-add"
      href={`${REMOTE_SERVER}/lab5/calculator?operation=add&a=${a}&b=${b}`}>
     Add {a} + {b}
   </a>
-  <a id="wd-query-parameter-subtract"
+  <a className="btn btn-danger" id="wd-query-parameter-subtract"
      href={`${REMOTE_SERVER}/lab5/calculator?operation=subtract&a=${a}&b=${b}`}>
     Substract {a} - {b}
   </a>
-  <a id="wd-query-parameter-multiply"
+  <a className="btn btn-danger" id="wd-query-parameter-multiply"
      href={`${REMOTE_SERVER}/lab5/calculator?operation=multiply&a=${a}&b=${b}`}>
     Multiply {a} * {b}
   </a>
-  <a id="wd-query-parameter-divide"
+  <a className="btn btn-danger" id="wd-query-parameter-divide"
      href={`${REMOTE_SERVER}/lab5/calculator?operation=divide&a=${a}&b=${b}`}>
     Divide {a} / {b}
   </a>

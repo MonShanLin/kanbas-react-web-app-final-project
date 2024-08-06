@@ -46,4 +46,3 @@ export const updateTodo = async (todo: any) => {
     return response.data;
   };
   
-

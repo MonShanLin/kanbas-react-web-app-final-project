@@ -1,12 +1,13 @@
 import './Assignments.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { addAssignment, updateAssignment } from "./reducer";
+import { addAssignment, updateAssignment, setAssignment } from "./reducer";
+import * as client from "./client";
 
 export default function AssignmentEditor() {
-  const { cid, id } = useParams();
+  const { cid, id } = useParams<{ cid: string; id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -14,8 +15,18 @@ export default function AssignmentEditor() {
     state.assignments.assignments.find((assignment) => assignment.course === cid && assignment._id === id)
   );
 
+  useEffect(() => {
+    if (cid && !assignment) {
+      const fetchAssignments = async () => {
+        const fetchedAssignments = await client.fetchAssignments(cid);
+        dispatch(setAssignment(fetchedAssignments));
+      };
+      fetchAssignments();
+    }
+  }, [cid, assignment, dispatch]);
+
   const dateObjectToHtmlDateString = (date: Date) => {
-    return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? '0' : ''}${date.getMonth() + 1}-${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   };
 
   const [assignmentDetails, setAssignmentDetails] = useState({
@@ -27,16 +38,39 @@ export default function AssignmentEditor() {
     until: assignment ? dateObjectToHtmlDateString(new Date(assignment.until)) : ""
   });
 
+  useEffect(() => {
+    if (assignment) {
+      setAssignmentDetails({
+        title: assignment.title,
+        description: assignment.description,
+        points: assignment.points,
+        due: dateObjectToHtmlDateString(new Date(assignment.due)),
+        available: dateObjectToHtmlDateString(new Date(assignment.available)),
+        until: dateObjectToHtmlDateString(new Date(assignment.until)),
+      });
+    }
+  }, [assignment]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setAssignmentDetails({ ...assignmentDetails, [id]: value });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const updatedAssignment = {
+      ...assignmentDetails,
+      due: new Date(assignmentDetails.due).toISOString(),
+      available: new Date(assignmentDetails.available).toISOString(),
+      until: new Date(assignmentDetails.until).toISOString(),
+      course: cid || ""
+    };
+
     if (assignment) {
-      dispatch(updateAssignment({ ...assignment, ...assignmentDetails, due: new Date(assignmentDetails.due).toISOString(), available: new Date(assignmentDetails.available).toISOString(), until: new Date(assignmentDetails.until).toISOString() }));
+      await client.updateAssignment({ ...updatedAssignment, _id: assignment._id });
+      dispatch(updateAssignment({ ...updatedAssignment, _id: assignment._id }));
     } else {
-      dispatch(addAssignment({ ...assignmentDetails, course: cid, due: new Date(assignmentDetails.due).toISOString(), available: new Date(assignmentDetails.available).toISOString(), until: new Date(assignmentDetails.until).toISOString() }));
+      const newAssignment = await client.createAssignment(cid as string, updatedAssignment);
+      dispatch(addAssignment(newAssignment));
     }
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
@@ -73,30 +107,20 @@ export default function AssignmentEditor() {
 
       <div className="row mb-3">
         <div className="col-md-4 text-end">
-          <label htmlFor="available" className="form-label"></label>
-        </div>
-
-        <div className="col-md-4">
           <label htmlFor="available" className="form-label">Available from</label>
         </div>
-
-        <div className="col-md-4">
+        <div className="col-md-4 flex-grow-1">
           <input type="date" id="available" value={assignmentDetails.available} onChange={handleInputChange} className="form-control" />
         </div>
       </div>
 
       <div className="row mb-3">
         <div className="col-md-4 text-end">
-          <label htmlFor="available" className="form-label"></label>
-        </div>
-
-        <div className="col-md-4 flex-grow-1">
           <label htmlFor="until" className="form-label">Until</label>
         </div>
-
-        <div className="col-md-4 ">
+        <div className="col-md-4 flex-grow-1">
           <input type="date" id="until" value={assignmentDetails.until} onChange={handleInputChange} className="form-control" />
-        </div>   
+        </div>
       </div>
 
       <div id="wd-editor-controls" className="text-nowrap">

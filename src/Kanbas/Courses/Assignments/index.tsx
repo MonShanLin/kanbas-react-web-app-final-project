@@ -1,28 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
-import { addAssignment, updateAssignment, deleteAssignment, editAssignment } from "./reducer";
+import { addAssignment, setAssignment, updateAssignment, deleteAssignment } from "./reducer";
+import { Assignment } from "./types";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentControls from "./AssignmentControls";
 import BannerControlButtons from "./BannerControlButtons";
 import { FaSearch } from "react-icons/fa";
+import * as client from "./client";
 
 export default function Assignments() {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
   const assignments = useSelector((state: RootState) => state.assignments.assignments.filter(assignment => assignment.course === cid));
   const dispatch = useDispatch();
   const [assignmentTitle, setAssignmentTitle] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
 
-  const handleAddAssignment = () => {
-    dispatch(addAssignment({ title: assignmentTitle, course: cid }));
-    setAssignmentTitle("");
+  const fetchAssignments = async () => {
+    if (cid) {
+      const fetchedAssignments = await client.fetchAssignments(cid);
+      dispatch(setAssignment(fetchedAssignments));
+    }
   };
 
-  const updateAssignmentHandler = (assignment: any) => {
+  useEffect(() => {
+    fetchAssignments();
+  }, [cid, dispatch]);
+
+  const handleAddAssignment = async () => {
+    if (cid) {
+      const newAssignment = await client.createAssignment(cid, { 
+        title: assignmentTitle, 
+        description: "", 
+        points: 100, 
+        due: "", 
+        available: "", 
+        until: "",
+        course: cid // Add the course property here
+      });
+      dispatch(addAssignment(newAssignment));
+      setAssignmentTitle("");
+    }
+  };
+
+  const saveAssignment = async (assignment: Assignment) => {
+    await client.updateAssignment(assignment);
     dispatch(updateAssignment(assignment));
   };
 
@@ -31,8 +56,9 @@ export default function Assignments() {
     setShowConfirmDialog(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (assignmentToDelete) {
+      await client.deleteAssignment(assignmentToDelete);
       dispatch(deleteAssignment(assignmentToDelete));
     }
     setShowConfirmDialog(false);
@@ -73,21 +99,24 @@ export default function Assignments() {
           </div>
 
           <ul className="wd-assignment list-group rounded-0">
-            {assignments.map(assignment => (
+            {assignments.map((assignment: Assignment) => (
               <li key={assignment._id} className="wd-assignment list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
                 <BsGripVertical className="me-2 fs-3" />
                 
                 <div className="flex-grow-1">
-                  { !assignment.editing && <a className="wd-assignment-link text-black no-underline" href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}><b>{assignment.title}</b></a>}
-                  { assignment.editing && (
+                  {!assignment.editing ? (
+                    <a className="wd-assignment-link text-black no-underline" href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}>
+                      <b>{assignment.title}</b>
+                    </a>
+                  ) : (
                     <input
                       className="form-control w-50 d-inline-block"
                       onChange={(e) =>
-                        updateAssignmentHandler({ ...assignment, title: e.target.value })
+                        dispatch(updateAssignment({ ...assignment, title: e.target.value }))
                       }
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          updateAssignmentHandler({ ...assignment, editing: false });
+                          saveAssignment({ ...assignment, editing: false });
                         }
                       }}
                       value={assignment.title}
