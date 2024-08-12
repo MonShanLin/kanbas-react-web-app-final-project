@@ -1,5 +1,4 @@
 import CoursesNavigation from "./Navigation";
-
 import Modules from "./Modules";
 import Piazza from "./Piazza";
 import Zoom from "./Zoom";
@@ -14,11 +13,13 @@ import PeopleTable from "./People/Table";
 import PeopleDetails from "./People/Details";
 
 export default function Courses({ courses }: { courses: any[]; }) {
-
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
-  
+
+  const fetchUsers = async () => {
+  };
+
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
@@ -27,32 +28,37 @@ export default function Courses({ courses }: { courses: any[]; }) {
       </h2>
 
       <div className="d-flex">
-    <div className="d-none d-md-block">
+        <div className="d-none d-md-block">
+          <CoursesNavigation />
+        </div>
+        <div className="flex-fill">
+          <Routes>
+            <Route path="/" element={<Navigate to="Home" />} />
+            <Route path="Home" element={<Home />} />
+            <Route path="Modules" element={<Modules />} />
+            <Route path="Assignments" element={<Assignments />} />
+            <Route path="Assignments/:id" element={<AssignmentEditor />} />
+            <Route path="Grades" element={<Grades />} />
+            <Route path="Zoom" element={<Zoom />} />
+            <Route path="Piazza" element={<Piazza />} />
+            <Route path="Quizzes" element={<Quizzes />} />
+            <Route path="People" element={<PeopleTable />} />
+            <Route path="People/:uid" element={<PeopleTable />} />
+            <Route path="People/Details/:uid" element={<PeopleDetailsWrapper fetchUsers={fetchUsers} />} />
+          </Routes>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-            <CoursesNavigation />
-            </div>
-    <div className="flex-fill">
-            <Routes>
-              <Route path="/" element={<Navigate to="Home" />} />
-              <Route path="Home" element={<Home/>} />
-              <Route path="Modules" element={<Modules/>} />
-              <Route path="Assignments"
-                     element={<Assignments/>} />
-              <Route path="Assignments/:id"
-                     element={<AssignmentEditor/>} />
-              <Route path="Grades" element={<Grades />} />     
-              <Route path="Zoom" element={<Zoom />} /> 
-              <Route path="Piazza" element={<Piazza />} /> 
-              <Route path="Quizzes" element={<Quizzes />} />   
-              <Route path="People" element={<PeopleTable />} />
-              <Route path="People/:uid" element={<PeopleTable />} />
-              <Route path="People/Details/:uid" element={<PeopleDetails fetchUsers={function (): void {
-              throw new Error("Function not implemented.");
-            } } />} />
-            </Routes>
-            </div>
-  </div>
-  </div>
 
-);
+function PeopleDetailsWrapper({ fetchUsers }: { fetchUsers: () => void }) {
+  const { uid } = useParams<{ uid: string }>();
+
+  if (!uid) {
+    return <div>Error: No user selected.</div>;
+  }
+
+  return <PeopleDetails selectedUserId={uid} fetchUsers={fetchUsers} />;
 }

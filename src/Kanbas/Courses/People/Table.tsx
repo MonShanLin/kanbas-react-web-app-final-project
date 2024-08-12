@@ -5,11 +5,11 @@ import PeopleDetails from "./Details";
 import { FaPlus } from 'react-icons/fa';
 
 export default function PeopleTable() {
-  const { cid } = useParams();
+  const { cid, uid } = useParams();
   const [users, setUsers] = useState<any[]>([]);
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(uid || null);
   const navigate = useNavigate();
 
   const filterUsersByName = async (name: string) => {
@@ -84,7 +84,10 @@ export default function PeopleTable() {
 
       {/* Render PeopleDetails only if a user is selected */}
       {selectedUserId && (
-        <PeopleDetails fetchUsers={fetchUsers} />
+        <PeopleDetails
+          fetchUsers={fetchUsers}
+          selectedUserId={selectedUserId}
+        />
       )}
 
       <table className="table table-striped">
