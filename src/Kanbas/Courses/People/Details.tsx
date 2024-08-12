@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import * as client from "./client";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 
-export default function PeopleDetails({ fetchUsers, selectedUserId }: 
-    { fetchUsers: () => void; selectedUserId: string; }) {
-  const navigate = useNavigate();
+export default function PeopleDetails({ fetchUsers, selectedUserId, onClose }: 
+    { fetchUsers: () => void; selectedUserId: string; onClose: () => void; }) {  // Added onClose prop
   const { cid } = useParams();
   const [user, setUser] = useState<any>(null);
   const [name, setName] = useState("");
@@ -31,13 +30,13 @@ export default function PeopleDetails({ fetchUsers, selectedUserId }:
     setUser(updatedUser);
     setEditing(false);
     fetchUsers();
-    navigate(`/Kanbas/Courses/${cid}/People`);
+    onClose();  // Use the onClose function to navigate back
   };
 
   const deleteUser = async (userId: string) => {
     await client.deleteUser(userId);
     fetchUsers();
-    navigate(`/Kanbas/Courses/${cid}/People`);
+    onClose();  // Use the onClose function to navigate back
   };
 
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function PeopleDetails({ fetchUsers, selectedUserId }:
     <div className="wd-people-details position-fixed top-0 end-0 bottom-0 bg-white p-4 shadow w-25">
       <IoCloseSharp
         className="fs-1 position-absolute top-0 start-0 m-3 cursor-pointer"
-        onClick={() => navigate(`/Kanbas/Courses/${cid}/People`)}
+        onClick={onClose}  // Use the onClose function when clicking "X"
       />
 
       <div className="text-center mt-2">
@@ -125,18 +124,8 @@ export default function PeopleDetails({ fetchUsers, selectedUserId }:
       <b>Total Activity:</b> <span className="wd-total-activity">{user.totalActivity}</span>
       
       <hr />
-      <button
-        onClick={() => deleteUser(selectedUserId)}
-        className="btn btn-danger float-end wd-delete"
-      >
-        Delete
-      </button>
-      <button
-        onClick={() => navigate(`/Kanbas/Courses/${cid}/People`)}
-        className="btn btn-secondary float-start float-end me-2 wd-cancel"
-      >
-        Cancel
-      </button>
+      <button onClick={() => deleteUser(selectedUserId)} className="btn btn-danger float-end wd-delete" > Delete </button>
+      <button onClick={onClose} className="btn btn-secondary float-start float-end me-2 wd-cancel" > Cancel </button>
     </div>
   );
 }

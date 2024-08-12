@@ -7,7 +7,7 @@ import Grades from "./Grades";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import Home from "./Home";
-import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
+import { Navigate, Route, Routes, useParams, useLocation, useNavigate } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import PeopleDetails from "./People/Details";
@@ -54,11 +54,23 @@ export default function Courses({ courses }: { courses: any[]; }) {
 
 
 function PeopleDetailsWrapper({ fetchUsers }: { fetchUsers: () => void }) {
-  const { uid } = useParams<{ uid: string }>();
+  const { uid, cid } = useParams<{ uid: string; cid: string }>();
+  const navigate = useNavigate();
+
+
+  const onClose = () => {
+    navigate(`/Kanbas/Courses/${cid}/People`);
+  };
 
   if (!uid) {
     return <div>Error: No user selected.</div>;
   }
 
-  return <PeopleDetails selectedUserId={uid} fetchUsers={fetchUsers} />;
+  return (
+    <PeopleDetails 
+      selectedUserId={uid} 
+      fetchUsers={fetchUsers} 
+      onClose={onClose}
+    />
+  );
 }

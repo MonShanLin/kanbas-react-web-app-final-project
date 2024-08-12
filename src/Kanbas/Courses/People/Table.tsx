@@ -54,6 +54,11 @@ export default function PeopleTable() {
     navigate(`/Kanbas/Courses/${cid}/People/${userId}`);
   };
 
+  const handleClose = () => {
+    setSelectedUserId(null);
+    navigate(`/Kanbas/Courses/${cid}/People`);
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -87,6 +92,7 @@ export default function PeopleTable() {
         <PeopleDetails
           fetchUsers={fetchUsers}
           selectedUserId={selectedUserId}
+          onClose={handleClose}  // Pass the handleClose function
         />
       )}
 
