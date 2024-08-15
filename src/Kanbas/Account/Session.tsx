@@ -1,3 +1,4 @@
+// /Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Account/Session.tsx
 import * as client from "./client";
 import { useEffect, useState } from "react";
 import { setCurrentUser } from "./reducer";

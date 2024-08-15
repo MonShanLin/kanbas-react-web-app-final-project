@@ -1,8 +1,16 @@
+///Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Courses/index.tsx
 import CoursesNavigation from "./Navigation";
 import Modules from "./Modules";
 import Piazza from "./Piazza";
 import Zoom from "./Zoom";
-import Quizzes from "./Quizzes";
+
+// add new import for quizzes
+import React from "react";
+import QuizListScreen from "./Quizzes";
+import QuizDetailsScreen from "./Quizzes/QuizDetails";
+import QuizEditorScreen from "./Quizzes/QuizEditor";
+import QuizQuestionsEditorScreen from "./Quizzes/QuizQuestionsEditor";
+
 import Grades from "./Grades";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
@@ -12,8 +20,9 @@ import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import PeopleDetails from "./People/Details";
 
-export default function Courses({ courses }: { courses: any[]; }) {
-  const { cid } = useParams();
+// userRole is passed down to the component when defining the routes
+export default function Courses({ courses, userRole }: { courses: any[]; userRole: any }) {
+  const { cid } = useParams<{ cid: string }>();
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
 
@@ -41,7 +50,13 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Grades" element={<Grades />} />
             <Route path="Zoom" element={<Zoom />} />
             <Route path="Piazza" element={<Piazza />} />
-            <Route path="Quizzes" element={<Quizzes />} />
+
+            // add new path for quizzes
+            <Route path="Quizzes" element={<QuizListScreen />} />
+            <Route path="Quizzes/:quizId" element={<QuizDetailsScreen userRole={userRole} />} />
+            <Route path="Quizzes/:quizId/Edit" element={<QuizEditorScreen userRole={userRole} />} />
+            <Route path="Quizzes/:quizId/Questions" element={<QuizQuestionsEditorScreen userRole={userRole} />} />
+
             <Route path="People" element={<PeopleTable />} />
             <Route path="People/:uid" element={<PeopleTable />} />
             <Route path="People/Details/:uid" element={<PeopleDetailsWrapper fetchUsers={fetchUsers} />} />

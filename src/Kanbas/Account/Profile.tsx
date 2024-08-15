@@ -1,3 +1,4 @@
+// /Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Account/Profile.tsx
 import * as client from "./client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";

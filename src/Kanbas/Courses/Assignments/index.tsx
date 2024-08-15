@@ -39,7 +39,7 @@ export default function Assignments() {
         due: "", 
         available: "", 
         until: "",
-        course: cid // Add the course property here
+        course: cid 
       });
       dispatch(addAssignment(newAssignment));
       setAssignmentTitle("");

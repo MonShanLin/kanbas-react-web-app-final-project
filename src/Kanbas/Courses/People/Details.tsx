@@ -1,3 +1,5 @@
+///Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Courses/People/Details.tsx
+
 import { useEffect, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { useParams } from "react-router";

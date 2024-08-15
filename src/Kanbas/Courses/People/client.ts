@@ -1,3 +1,4 @@
+// /Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Courses/People/client.ts
 import axios from "axios";
 export const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
 export const USERS_API = `${REMOTE_SERVER}/api/users`;

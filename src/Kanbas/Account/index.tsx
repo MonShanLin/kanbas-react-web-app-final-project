@@ -1,3 +1,5 @@
+// /Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Account/index.tsx
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import Signin from "./Signin";
 import AccountNavigation from "./Navigation";

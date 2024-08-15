@@ -1,3 +1,4 @@
+///Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/index.tsx
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { Routes, Route, Navigate } from "react-router";
@@ -17,6 +18,7 @@ export default function Kanbas() {
       const courses = await client.fetchAllCourses();
       setCourses(courses);
     };
+
     useEffect(() => {
       fetchCourses();
     }, []);
@@ -64,12 +66,12 @@ export default function Kanbas() {
                 addNewCourse={addNewCourse}
                 deleteCourse={deleteCourse}
                 updateCourse={updateCourse}
-              /></ProtectedRoute>
+              />
+              </ProtectedRoute>
             } />
             <Route path="Courses/:cid/*" element={
               <ProtectedRoute><Courses 
-              courses={courses} 
-              /></ProtectedRoute>} />
+                courses={courses} userRole={undefined}              /></ProtectedRoute>} />
               
             <Route path="Calendar" element={<h1>Calendar</h1>} />
             <Route path="Inbox" element={<h1>Inbox</h1>} />

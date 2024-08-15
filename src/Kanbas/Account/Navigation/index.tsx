@@ -1,3 +1,4 @@
+// /Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/Account/Navigation/index.tsx
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 
