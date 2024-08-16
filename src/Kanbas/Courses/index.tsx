@@ -6,10 +6,9 @@ import Zoom from "./Zoom";
 
 // add new import for quizzes
 import React from "react";
-import QuizListScreen from "./Quizzes";
+import QuizListScreen from "./Quizzes/QuizzesList";
 import QuizDetailsScreen from "./Quizzes/QuizDetails";
 import QuizEditorScreen from "./Quizzes/QuizEditor";
-import QuizQuestionsEditorScreen from "./Quizzes/QuizQuestionsEditor";
 
 import Grades from "./Grades";
 import Assignments from "./Assignments";
@@ -52,10 +51,10 @@ export default function Courses({ courses, userRole }: { courses: any[]; userRol
             <Route path="Piazza" element={<Piazza />} />
 
             // add new path for quizzes
-            <Route path="Quizzes" element={<QuizListScreen />} />
+            <Route path="Quizzes" element={<QuizListScreen userRole={userRole}/>} />
             <Route path="Quizzes/:quizId" element={<QuizDetailsScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Edit" element={<QuizEditorScreen userRole={userRole} />} />
-            <Route path="Quizzes/:quizId/Questions" element={<QuizQuestionsEditorScreen userRole={userRole} />} />
+            
 
             <Route path="People" element={<PeopleTable />} />
             <Route path="People/:uid" element={<PeopleTable />} />
