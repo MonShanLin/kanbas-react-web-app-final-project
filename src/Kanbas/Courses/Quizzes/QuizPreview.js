@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getQuizById, getQuestionsForQuiz } from './client';
+import { findQuizById /*getQuestionsForQuiz*/ } from './client';
 
 const QuizPreviewScreen = ({ userRole }) => {
-  const { quizId } = useParams();
+  const { cid, quizId } = useParams();
   const [quiz, setQuiz] = useState(null);
   const [questions, setQuestions] = useState([]);
 
@@ -12,10 +12,10 @@ const QuizPreviewScreen = ({ userRole }) => {
   }, [quizId]);
 
   const fetchQuizAndQuestions = async () => {
-    const fetchedQuiz = await getQuizById(quizId);
-    const fetchedQuestions = await getQuestionsForQuiz(quizId);
+    const fetchedQuiz = await findQuizById(quizId);
+    //const fetchedQuestions = await getQuestionsForQuiz(quizId);
     setQuiz(fetchedQuiz);
-    setQuestions(fetchedQuestions);
+    //setQuestions(fetchedQuestions);
   };
 
   return (

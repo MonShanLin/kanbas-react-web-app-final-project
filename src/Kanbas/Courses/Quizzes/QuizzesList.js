@@ -2,21 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaPlus, FaEllipsisV, FaCheckCircle, FaTimes } from "react-icons/fa";
 import { findAllQuizzes, createQuiz, deleteQuiz, updateQuiz } from './client';
-import "./QuizListScreen.css"; // Assume this file contains the relevant CSS
+import "./styles.css";
 
 export default function QuizListScreen({ userRole }) {
   const { cid } = useParams();
   const [quizzes, setQuizzes] = useState([]);
-  const [selectedQuizId, setSelectedQuizId] = useState(null); // To track which quiz's context menu is open
+  const [selectedQuizId, setSelectedQuizId] = useState();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (cid) {
-      fetchQuizzes();
-    } else {
-      console.error("cid is undefined");
-    }
-  }, [cid]);
 
   const fetchQuizzes = async () => {
     try {
@@ -31,7 +23,7 @@ export default function QuizListScreen({ userRole }) {
     try {
       const newQuiz = await createQuiz(cid, {
         title: 'New Quiz',
-        description: 'Test Description',
+        description: 'New Description',
         type: 'Graded Quiz',
         points: 100,
         assignmentGroup: 'Quizzes',
@@ -63,13 +55,15 @@ export default function QuizListScreen({ userRole }) {
   };
 
   const handleEditQuiz = (quizId) => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Edit`);
+    setSelectedQuizId(quizId);
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Detail`);
   };
 
   const handleDeleteQuiz = async (quizId) => {
     try {
       await deleteQuiz(quizId);
-      fetchQuizzes();
+      // Remove the deleted quiz from the state
+      setQuizzes(quizzes.filter((quiz) => quiz._id !== quizId));
     } catch (error) {
       console.error("Error deleting quiz:", error);
     }
@@ -84,9 +78,6 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
-  const handleQuizClick = (quizId) => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}`);
-  };
 
   const calculateAvailability = (quiz) => {
     const now = new Date();
@@ -102,6 +93,15 @@ export default function QuizListScreen({ userRole }) {
   const toggleContextMenu = (quizId) => {
     setSelectedQuizId(selectedQuizId === quizId ? null : quizId);
   };
+
+
+  useEffect(() => {
+    if (cid) {
+      fetchQuizzes();
+    } else {
+      console.error("cid is undefined");
+    }
+  }, [cid]);
 
   return (
     <div id="wd-quizzes">
@@ -121,13 +121,13 @@ export default function QuizListScreen({ userRole }) {
       <ul className="wd-quiz list-group rounded-0">
         {quizzes.map((quiz) => (
           <li key={quiz._id} className="wd-quiz-item list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
-            <div className="flex-grow-1" onClick={() => handleQuizClick(quiz._id)}>
+            <div className="flex-grow-1" onClick={() => handleEditQuiz(quiz._id)}>
               <div className="quiz-title">
                 <b>{quiz.title}</b>
               </div>
               <div className="smaller-text">
                 <span className="text-muted">
-                  Availability: {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
+                  {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
                   {userRole === 'student' && quiz.score && <span> | Score: {quiz.score}</span>}
                 </span>
               </div>

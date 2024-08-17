@@ -9,6 +9,8 @@ import React from "react";
 import QuizListScreen from "./Quizzes/QuizzesList";
 import QuizDetailsScreen from "./Quizzes/QuizDetails";
 import QuizEditorScreen from "./Quizzes/QuizEditor";
+import QuizPreviewScreen from "./Quizzes/QuizPreview";
+
 
 import Grades from "./Grades";
 import Assignments from "./Assignments";
@@ -52,9 +54,9 @@ export default function Courses({ courses, userRole }: { courses: any[]; userRol
 
             // add new path for quizzes
             <Route path="Quizzes" element={<QuizListScreen userRole={userRole}/>} />
-            <Route path="Quizzes/:quizId" element={<QuizDetailsScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Edit" element={<QuizEditorScreen userRole={userRole} />} />
-            
+            <Route path="Quizzes/:quizId/Detail" element={<QuizDetailsScreen userRole={userRole} />} />
+            <Route path="Quizzes/:quizId/Preview" element={<QuizPreviewScreen userRole={userRole} />} />
 
             <Route path="People" element={<PeopleTable />} />
             <Route path="People/:uid" element={<PeopleTable />} />
