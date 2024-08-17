@@ -140,6 +140,7 @@ export default function QuizListScreen({ userRole }) {
                   </div>
                 </div>
 
+
                 <div className="quiz-status">
                   {quiz.published ? (
                     <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
