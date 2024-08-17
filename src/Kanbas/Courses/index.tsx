@@ -54,7 +54,7 @@ export default function Courses({ courses, userRole }: { courses: any[]; userRol
             <Route path="Piazza" element={<Piazza />} />
 
             // add new path for quizzes
-            <Route path="Quizzes" element={<QuizListScreen userRole={userRole}/>} />
+            <Route path="Quizzes" element={<QuizListScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Edit" element={<QuizEditorScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Detail" element={<QuizDetailsScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Preview" element={<QuizPreviewScreen userRole={userRole} />} />

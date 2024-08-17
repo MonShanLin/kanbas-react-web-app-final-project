@@ -1,41 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { findQuizById /*getQuestionsForQuiz*/ } from './client';
+import React from 'react';
 
-const QuizPreviewScreen = ({ userRole }) => {
-  const { cid, quizId } = useParams();
-  const [quiz, setQuiz] = useState(null);
-  const [questions, setQuestions] = useState([]);
-
-  useEffect(() => {
-    fetchQuizAndQuestions();
-  }, [quizId]);
-
-  const fetchQuizAndQuestions = async () => {
-    const fetchedQuiz = await findQuizById(quizId);
-    //const fetchedQuestions = await getQuestionsForQuiz(quizId);
-    setQuiz(fetchedQuiz);
-    //setQuestions(fetchedQuestions);
-  };
-
+export default function QuizPreviewScreen({ userRole }) {
   return (
     <div>
-      {quiz && (
-        <div>
-          <h1>{quiz.title}</h1>
-          <p>{quiz.description}</p>
-          <ul>
-            {questions.map((question) => (
-              <li key={question._id}>
-                <p>{question.title}</p>
-                {/* Render the question based on its type */}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <h1>Preview Quiz Screen</h1>
+      <p>User Role: {userRole}</p>
+      {/* Add your preview screen logic here */}
     </div>
   );
-};
-
-export default QuizPreviewScreen;
+}

@@ -4,7 +4,7 @@ const initialState = {
   currentUser: null,
 
   // Add userRole with type
-  userRole: null as string | null, 
+  userRole: null, 
 };
 const accountSlice = createSlice({
   name: "account",

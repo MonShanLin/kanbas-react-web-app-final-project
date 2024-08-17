@@ -27,10 +27,12 @@ export default function Profile() {
     try {
       const account = await client.profile();
       setProfile(account);
+      dispatch(setCurrentUser(account)); // Dispatch the user profile
     } catch (err: any) {
       navigate("/Kanbas/Account/Signin");
     }
   };
+  
 
   const signout = async () => {
     await client.signout();

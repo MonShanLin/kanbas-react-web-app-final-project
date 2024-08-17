@@ -74,7 +74,7 @@ export default function QuizListScreen({ userRole }) {
   // Handle publishing/unpublishing a quiz
   const handlePublishQuiz = async (quizId, published) => {
     try {
-      const updatedQuiz = await updateQuiz(quizId, { published: !published });
+      const updatedQuiz = await updateQuiz(cid, quizId, { published: !published });
       setQuizzes(quizzes.map(q => q._id === quizId ? updatedQuiz : q));
     } catch (error) {
       console.error("Error updating quiz publish status:", error);
@@ -126,40 +126,42 @@ export default function QuizListScreen({ userRole }) {
       ) : (
         <ul className="wd-quiz list-group rounded-0">
           {quizzes.map((quiz) => (
-            <li key={quiz._id} className="wd-quiz-item list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
-              <div className="flex-grow-1" onClick={() => handleEditQuiz(quiz._id)}>
-                <div className="quiz-title">
-                  <b>{quiz.title}</b>
-                </div>
-                <div className="smaller-text">
-                  <span className="text-muted">
-                    {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
-                    {userRole === 'student' && quiz.score && <span> | Score: {quiz.score}</span>}
-                  </span>
-                </div>
-              </div>
-
-              <div className="quiz-status">
-                {quiz.published ? (
-                  <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-                ) : (
-                  <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-                )}
-              </div>
-
-              <div className="quiz-actions">
-                <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
-                {selectedQuizId === quiz._id && (
-                  <div className="context-menu">
-                    <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
-                    <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
-                    <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
-                      {quiz.published ? 'Unpublish' : 'Publish'}
-                    </button>
+            (userRole === 'FACULTY' || quiz.published) && (  // Check if user is Faculty or quiz is published
+              <li key={quiz._id} className="wd-quiz-item list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
+                <div className="flex-grow-1" onClick={() => handleEditQuiz(quiz._id)}>
+                  <div className="quiz-title">
+                    <b>{quiz.title}</b>
                   </div>
-                )}
-              </div>
-            </li>
+                  <div className="smaller-text">
+                    <span className="text-muted">
+                      {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
+                      {userRole === 'STUDENT'  && quiz.published && <span> | Score: {quiz.score}</span>}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="quiz-status">
+                  {quiz.published ? (
+                    <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                  ) : (
+                    <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                  )}
+                </div>
+
+                <div className="quiz-actions">
+                  <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
+                  {selectedQuizId === quiz._id && (
+                    <div className="context-menu">
+                      <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
+                      <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
+                      <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
+                        {quiz.published ? 'Unpublish' : 'Publish'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </li>
+            )
           ))}
         </ul>
       )}

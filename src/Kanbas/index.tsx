@@ -1,8 +1,7 @@
-///Users/phoebelin/2024/summer/webdev/kanbas-react-web-app/src/Kanbas/index.tsx
 import React, { useEffect, useState } from "react";
-import { Provider } from "react-redux";
+import { useSelector } from "react-redux";
 import { Routes, Route, Navigate } from "react-router";
-import store from "./store";
+import store, { RootState } from "./store";
 import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
@@ -10,20 +9,20 @@ import * as client from "./Courses/client";
 import "./styles.css";
 import Account from "./Account";
 import ProtectedRoute from "./ProtectedRoute";
+import { Provider } from "react-redux";
 
-export default function Kanbas() {
+function Kanbas() {
   const [courses, setCourses] = useState<any[]>([]);
   
   const fetchCourses = async () => {
-      const courses = await client.fetchAllCourses();
-      setCourses(courses);
-    };
+    const courses = await client.fetchAllCourses();
+    setCourses(courses);
+  };
 
-    useEffect(() => {
-      fetchCourses();
-    }, []);
+  useEffect(() => {
+    fetchCourses();
+  }, []);
 
-  
   const [course, setCourse] = useState<any>({
     _id: "1234",
     name: "New Course",
@@ -50,37 +49,47 @@ export default function Kanbas() {
     );
   };
 
+  // Use `useSelector` to get the `userRole` from the Redux store
+  const userRole = useSelector((state: RootState) => state.accountReducer.userRole);
+
+  return (
+    <div id="wd-kanbas">
+      <KanbasNavigation />
+      <div className="wd-main-content-offset p-3">
+        <Routes>
+          <Route path="/" element={<Navigate to="Dashboard" />} />
+          <Route path="/Account/*" element={<Account />} />
+          <Route path="Dashboard" element={
+            <ProtectedRoute><Dashboard
+              courses={courses}
+              course={course}
+              setCourse={setCourse}
+              addNewCourse={addNewCourse}
+              deleteCourse={deleteCourse}
+              updateCourse={updateCourse}
+            />
+            </ProtectedRoute>
+          } />
+
+          <Route path="Courses/:cid/*" element={
+          <ProtectedRoute><Courses 
+              courses={courses} userRole={userRole} 
+            /></ProtectedRoute>} />   
+
+          <Route path="Calendar" element={<h1>Calendar</h1>} />
+          <Route path="Inbox" element={<h1>Inbox</h1>} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
+function RootComponent() {
   return (
     <Provider store={store}>
-      <div id="wd-kanbas">
-        <KanbasNavigation />
-        <div className="wd-main-content-offset p-3">
-          <Routes>
-            <Route path="/" element={<Navigate to="Dashboard" />} />
-            <Route path="/Account/*" element={<Account />} />
-            <Route path="Dashboard" element={
-              <ProtectedRoute><Dashboard
-                courses={courses}
-                course={course}
-                setCourse={setCourse}
-                addNewCourse={addNewCourse}
-                deleteCourse={deleteCourse}
-                updateCourse={updateCourse}
-              />
-              </ProtectedRoute>
-            } />
-
-            <Route path="Courses/:cid/*" element={
-            <ProtectedRoute><Courses 
-                courses={courses} userRole={undefined} 
-              /></ProtectedRoute>} />   
-
-            <Route path="Calendar" element={<h1>Calendar</h1>} />
-            <Route path="Inbox" element={<h1>Inbox</h1>} />
-          </Routes>
-        </div>
-      </div>
+      <Kanbas />
     </Provider>
   );
 }
 
+export default RootComponent;
