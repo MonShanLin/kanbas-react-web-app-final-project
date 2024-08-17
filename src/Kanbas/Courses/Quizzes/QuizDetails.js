@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';  // useLocation added to access state passed from QuizListScreen
 import * as client from "./client";
 import "./QuizDetailsScreen.css";
 
@@ -7,29 +7,34 @@ export default function QuizDetailsScreen({ userRole }) {
   const [quiz, setQuiz] = useState(null);  // Set initial state for the quiz
   const navigate = useNavigate();
   const { cid, quizId } = useParams();  // Extract cid and quizId from URL params
+  const location = useLocation();  // Access location to get passed state
+
+  useEffect(() => {
+    if (quizId === '0' && location.state?.quiz) {
+      // Handle new quiz creation case
+      setQuiz(location.state.quiz);  // Set default quiz data passed from QuizListScreen
+    } else {
+      fetchQuiz();  // Fetch existing quiz data if quizId is not '0'
+    }
+  }, [quizId]);
 
   const fetchQuiz = async () => {
-    if (!quizId) return;  // Ensure quizId exists before making API call
+    if (!quizId) return;
     try {
       const fetchedQuiz = await client.findQuizById(cid, quizId);  // Fetch quiz by cid and quizId
       setQuiz(fetchedQuiz);  // Update quiz state with fetched quiz data
     } catch (error) {
-      console.error("Error fetching quiz:", error);  // Handle errors
+      console.error("Error fetching quiz:", error);
     }
   };
 
-  useEffect(() => {
-    fetchQuiz();  // Fetch quiz data when component mounts or quizId changes
-  }, [quizId]);
-
   const handleEdit = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Edit`);  // Navigate to Edit screen
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Edit`, { state: { quiz } });  // Navigate to Edit screen with quiz data
   };
 
   const handlePreview = () => {
-    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Preview`);  // Navigate to Preview screen
+    navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Preview`, { state: { quiz } });  // Navigate to Preview screen with quiz data
   };
-
 
   return (
     <div className="quiz-details-container">
@@ -53,7 +58,8 @@ export default function QuizDetailsScreen({ userRole }) {
           <p><b>Due Date:</b> {quiz.dueDate ? new Date(quiz.dueDate).toLocaleDateString() : 'None'}</p>
           <p><b>Available Date:</b> {quiz.availableDate ? new Date(quiz.availableDate).toLocaleDateString() : 'None'}</p>
           <p><b>Until Date:</b> {quiz.untilDate ? new Date(quiz.untilDate).toLocaleDateString() : 'None'}</p>
-
+          <p><b>Published:</b> {quiz.published ? 'Yes' : 'No'}</p>
+          
           {userRole === 'Faculty' && (
             <div className="button-group">
               <button className="edit-button" onClick={handleEdit}>Edit</button>
@@ -62,10 +68,10 @@ export default function QuizDetailsScreen({ userRole }) {
           )}
 
           {userRole === 'Student' && (
-            <button className="start-quiz-button" onClick={() => navigate(`/courses/${cid}/quizzes/${quizId}/start`)}>Start Quiz</button>
+            <button className="start-quiz-button" onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/StartQuiz`)}>Start Quiz</button>
           )}
         </div>
       )}
     </div>
   );
-} 
+}

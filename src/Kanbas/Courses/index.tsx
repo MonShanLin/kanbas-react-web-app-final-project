@@ -10,7 +10,7 @@ import QuizListScreen from "./Quizzes/QuizzesList";
 import QuizDetailsScreen from "./Quizzes/QuizDetails";
 import QuizEditorScreen from "./Quizzes/QuizEditor";
 import QuizPreviewScreen from "./Quizzes/QuizPreview";
-
+import StartQuizScreen from "./Quizzes/StartQuiz";
 
 import Grades from "./Grades";
 import Assignments from "./Assignments";
@@ -20,6 +20,7 @@ import { Navigate, Route, Routes, useParams, useLocation, useNavigate } from "re
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import PeopleDetails from "./People/Details";
+import StartQuiz from "./Quizzes/StartQuiz";
 
 // userRole is passed down to the component when defining the routes
 export default function Courses({ courses, userRole }: { courses: any[]; userRole: any }) {
@@ -57,6 +58,8 @@ export default function Courses({ courses, userRole }: { courses: any[]; userRol
             <Route path="Quizzes/:quizId/Edit" element={<QuizEditorScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Detail" element={<QuizDetailsScreen userRole={userRole} />} />
             <Route path="Quizzes/:quizId/Preview" element={<QuizPreviewScreen userRole={userRole} />} />
+            <Route path="Quizzes/:quizId/StartQuiz" element={<StartQuizScreen userRole={userRole} />} />
+
 
             <Route path="People" element={<PeopleTable />} />
             <Route path="People/:uid" element={<PeopleTable />} />

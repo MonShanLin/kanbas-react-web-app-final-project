@@ -7,9 +7,10 @@ import "./styles.css";
 export default function QuizListScreen({ userRole }) {
   const { cid } = useParams();
   const [quizzes, setQuizzes] = useState([]);
-  const [selectedQuizId, setSelectedQuizId] = useState();
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch all quizzes for the given course ID
   const fetchQuizzes = async () => {
     try {
       const fetchedQuizzes = await findAllQuizzes(cid);
@@ -19,11 +20,13 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
+  // Handle adding a new quiz
   const handleAddQuiz = async () => {
     try {
-      const newQuiz = await createQuiz(cid, {
+      // Default quiz data
+      const newQuiz = {
         title: 'New Quiz',
-        description: 'New Description',
+        description: 'Add Description',
         type: 'Graded Quiz',
         points: 100,
         assignmentGroup: 'Quizzes',
@@ -36,32 +39,31 @@ export default function QuizListScreen({ userRole }) {
         oneQuestionAtATime: true,
         webcamRequired: false,
         lockQuestions: false,
-        dueDate: new Date('2024-12-31'),
-        availableDate: new Date('2024-12-01'),
-        untilDate: new Date('2025-01-01'),
+        dueDate: new Date('2024-08-31'),
+        availableDate: new Date('2024-08-01'),
+        untilDate: new Date('2025-09-30'),
         published: false,
         courseId: cid,
         questions: [],
-      });
+      };
 
-      if (newQuiz && newQuiz._id) {
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuiz._id}/Edit`);
-      } else {
-        console.error("Error: New quiz creation failed.");
-      }
+      // Navigate to Quiz Details screen with default data to be edited
+      navigate(`/Kanbas/Courses/${cid}/Quizzes/0/Detail`, { state: { quiz: newQuiz } });
     } catch (error) {
       console.error("Error creating new quiz:", error);
     }
   };
 
+  // Handle editing an existing quiz
   const handleEditQuiz = (quizId) => {
     setSelectedQuizId(quizId);
     navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Detail`);
   };
 
+  // Handle deleting a quiz
   const handleDeleteQuiz = async (quizId) => {
     try {
-      await deleteQuiz(quizId);
+      await deleteQuiz(cid, quizId);
       // Remove the deleted quiz from the state
       setQuizzes(quizzes.filter((quiz) => quiz._id !== quizId));
     } catch (error) {
@@ -69,6 +71,7 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
+  // Handle publishing/unpublishing a quiz
   const handlePublishQuiz = async (quizId, published) => {
     try {
       const updatedQuiz = await updateQuiz(quizId, { published: !published });
@@ -78,7 +81,7 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
-
+  // Calculate availability status of the quiz
   const calculateAvailability = (quiz) => {
     const now = new Date();
     if (quiz.availableDate && now < new Date(quiz.availableDate)) {
@@ -93,7 +96,6 @@ export default function QuizListScreen({ userRole }) {
   const toggleContextMenu = (quizId) => {
     setSelectedQuizId(selectedQuizId === quizId ? null : quizId);
   };
-
 
   useEffect(() => {
     if (cid) {
@@ -118,45 +120,49 @@ export default function QuizListScreen({ userRole }) {
         </div>
       </div>
 
-      <ul className="wd-quiz list-group rounded-0">
-        {quizzes.map((quiz) => (
-          <li key={quiz._id} className="wd-quiz-item list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
-            <div className="flex-grow-1" onClick={() => handleEditQuiz(quiz._id)}>
-              <div className="quiz-title">
-                <b>{quiz.title}</b>
-              </div>
-              <div className="smaller-text">
-                <span className="text-muted">
-                  {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
-                  {userRole === 'student' && quiz.score && <span> | Score: {quiz.score}</span>}
-                </span>
-              </div>
-            </div>
-
-            <div className="quiz-status">
-              {quiz.published ? (
-                <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-              ) : (
-                <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-              )}
-            </div>
-
-            <div className="quiz-actions">
-              <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
-              {selectedQuizId === quiz._id && (
-                <div className="context-menu">
-                  <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
-                  <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
-                  <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
-                    {quiz.published ? 'Unpublish' : 'Publish'}
-                  </button>
+      {/* Conditional rendering: Show message if quizzes list is empty */}
+      {quizzes.length === 0 ? (
+        <p className="no-quizzes-message">No quizzes available. Click the "+ Quiz" button to add a new quiz.</p>
+      ) : (
+        <ul className="wd-quiz list-group rounded-0">
+          {quizzes.map((quiz) => (
+            <li key={quiz._id} className="wd-quiz-item list-group-item p-3 ps-1 d-flex align-items-center green-border-left">
+              <div className="flex-grow-1" onClick={() => handleEditQuiz(quiz._id)}>
+                <div className="quiz-title">
+                  <b>{quiz.title}</b>
                 </div>
-              )}
-              
-            </div>
-          </li>
-        ))}
-      </ul>
+                <div className="smaller-text">
+                  <span className="text-muted">
+                    {calculateAvailability(quiz)} | Due: {new Date(quiz.dueDate).toLocaleDateString()} | {quiz.points} pts | {quiz.questions.length} Questions
+                    {userRole === 'student' && quiz.score && <span> | Score: {quiz.score}</span>}
+                  </span>
+                </div>
+              </div>
+
+              <div className="quiz-status">
+                {quiz.published ? (
+                  <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                ) : (
+                  <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                )}
+              </div>
+
+              <div className="quiz-actions">
+                <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
+                {selectedQuizId === quiz._id && (
+                  <div className="context-menu">
+                    <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
+                    <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
+                    <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
+                      {quiz.published ? 'Unpublish' : 'Publish'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

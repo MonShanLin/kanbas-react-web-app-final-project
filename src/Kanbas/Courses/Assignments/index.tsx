@@ -134,8 +134,7 @@ export default function Assignments() {
           </ul>
         </li>
       </ul>
-
-      // Delete confirm window                    
+                  
       {showConfirmDialog && (
         <div className="confirm-dialog">
           <p>Are you sure you want to remove the assignment?</p>
