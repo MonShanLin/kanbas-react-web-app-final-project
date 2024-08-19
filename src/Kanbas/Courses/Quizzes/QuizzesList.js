@@ -20,7 +20,7 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
-  // Handle adding a new quiz
+  // Handle adding a new quiz (Faculty only)
   const handleAddQuiz = async () => {
     try {
       // Default quiz data
@@ -54,13 +54,13 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
-  // Handle editing an existing quiz
+  // Handle editing an existing quiz (Faculty only)
   const handleEditQuiz = (quizId) => {
     setSelectedQuizId(quizId);
     navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizId}/Detail`);
   };
 
-  // Handle deleting a quiz
+  // Handle deleting a quiz (Faculty only)
   const handleDeleteQuiz = async (quizId) => {
     try {
       await deleteQuiz(cid, quizId);
@@ -71,7 +71,7 @@ export default function QuizListScreen({ userRole }) {
     }
   };
 
-  // Handle publishing/unpublishing a quiz
+  // Handle publishing/unpublishing a quiz (Faculty only)
   const handlePublishQuiz = async (quizId, published) => {
     try {
       const updatedQuiz = await updateQuiz(cid, quizId, { published: !published });
@@ -107,11 +107,14 @@ export default function QuizListScreen({ userRole }) {
 
   return (
     <div id="wd-quizzes">
-      <div className="header-row">
-        <button className="add-quiz-btn" onClick={handleAddQuiz}>
-          <FaPlus /> Quiz
-        </button>
-      </div>
+      {/* Show Add Quiz button only if the user is a faculty member */}
+      {userRole === 'FACULTY' && (
+        <div className="header-row">
+          <button className="add-quiz-btn" onClick={handleAddQuiz}>
+            <FaPlus /> Quiz
+          </button>
+        </div>
+      )}
 
       <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center justify-content-between">
         <div className="d-flex align-items-center">
@@ -140,27 +143,31 @@ export default function QuizListScreen({ userRole }) {
                   </div>
                 </div>
 
-
-                <div className="quiz-status">
-                  {quiz.published ? (
-                    <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-                  ) : (
-                    <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
-                  )}
-                </div>
-
-                <div className="quiz-actions">
-                  <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
-                  {selectedQuizId === quiz._id && (
-                    <div className="context-menu">
-                      <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
-                      <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
-                      <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
-                        {quiz.published ? 'Unpublish' : 'Publish'}
-                      </button>
+                {/* Faculty can edit/publish/unpublish; students cannot */}
+                {userRole === 'FACULTY' && (
+                  <>
+                    <div className="quiz-status">
+                      {quiz.published ? (
+                        <FaCheckCircle className="icon-published" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                      ) : (
+                        <FaTimes className="icon-unpublished" onClick={() => handlePublishQuiz(quiz._id, quiz.published)} />
+                      )}
                     </div>
-                  )}
-                </div>
+
+                    <div className="quiz-actions">
+                      <FaEllipsisV onClick={() => toggleContextMenu(quiz._id)} />
+                      {selectedQuizId === quiz._id && (
+                        <div className="context-menu">
+                          <button onClick={() => handleEditQuiz(quiz._id)}>Edit</button>
+                          <button onClick={() => handleDeleteQuiz(quiz._id)}>Delete</button>
+                          <button onClick={() => handlePublishQuiz(quiz._id, quiz.published)}>
+                            {quiz.published ? 'Unpublish' : 'Publish'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </li>
             )
           ))}

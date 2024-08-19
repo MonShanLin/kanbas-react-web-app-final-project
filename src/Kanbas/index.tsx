@@ -51,6 +51,7 @@ function Kanbas() {
 
   // Use `useSelector` to get the `userRole` from the Redux store
   const userRole = useSelector((state: RootState) => state.accountReducer.userRole);
+  const userLoginId = useSelector((state: RootState) => state.accountReducer.userLoginId);
 
   return (
     <div id="wd-kanbas">
@@ -73,7 +74,7 @@ function Kanbas() {
 
           <Route path="Courses/:cid/*" element={
           <ProtectedRoute><Courses 
-              courses={courses} userRole={userRole} 
+              courses={courses} userRole={userRole} userLoginId={userLoginId} 
             /></ProtectedRoute>} />   
 
           <Route path="Calendar" element={<h1>Calendar</h1>} />

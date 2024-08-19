@@ -4,7 +4,8 @@ const initialState = {
   currentUser: null,
 
   // Add userRole with type
-  userRole: null, 
+  userRole: null,
+  userLoginId:null
 };
 const accountSlice = createSlice({
   name: "account",
@@ -15,6 +16,7 @@ const accountSlice = createSlice({
 
       // Store userRole in Redux
       state.userRole = action.payload?.role || null;
+      state.userLoginId = action.payload?.loginId || null;
     },
   },
 });
